@@ -52,8 +52,9 @@ function send(){
         data: {
             img: dataURL
         }
-    }).done(function(o) {
-            console.log('saved');
+    }).done(imageUploaded);
+}
 
-    });
+function imageUploaded(result){
+    window.location = result.url;
 }

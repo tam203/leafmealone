@@ -72,14 +72,11 @@ function addDrawListeners(canvas){
 // create a function to pass touch events and coordinates to drawer
 function draw(event){
 
-    console.log(event.type);
     event.preventDefault();
     // get the touch coordinates
     try{
         var target = (event.targetTouches) ?  event.targetTouches[0] : event;
         var coors = {
-//            x: (event.targetTouches)? event.targetTouches[0].pageX : event.clientX - event.target.offsetParent.offsetLeft,
-//            y: (event.targetTouches)? event.targetTouches[0].pageY :  event.clientY - event.target.offsetParent.offsetTop
             x: target.clientX - event.target.offsetParent.offsetLeft,
             y: target.clientY - event.target.offsetParent.offsetTop
         };
