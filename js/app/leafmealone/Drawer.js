@@ -1,5 +1,6 @@
-define(['dojo/_base/lang',
-    'dojo/_base/declare'], function (lang, declare) {
+define(['leafmealone/log',
+    'dojo/_base/lang',
+    'dojo/_base/declare'], function (log, lang, declare) {
 
     //noinspection JSUnusedGlobalSymbols
     return declare([],{
@@ -61,16 +62,18 @@ define(['dojo/_base/lang',
         touchcancel:function(coors){this.touchend(coors);},
 
         draw:function(event){
+            log.log("Touch = " + Boolean(event.targetTouches));
+            if(event.targetTouches && event.targetTouches.length){
+                log.log("Num touch = " + event.targetTouches.length);
+            }
             if(!(event.targetTouches && event.targetTouches.length > 1)){
                 event.preventDefault();
-                // get the touch coordinates
                 var coors;
                 try{
                     coors = (event.targetTouches) ?  this._getTouchCoords(event) : this._getMouseCoords(event);
                 } catch (e) {
                     coors = {x:0, y:0}
                 }
-                //console.log(coors.x, coors.y);
                 // pass the coordinates to the appropriate handler
                 this[event.type](coors);
             }
