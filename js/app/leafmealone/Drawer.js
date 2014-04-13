@@ -37,9 +37,9 @@ define(['leafmealone/log',
             this._mCtx.lineWidth=this._getSize() * 2;
         },
         touchstart: function(coors){
-            this._doPoint(coors);
-            this._mCtx.beginPath();
+            //this._doPoint(coors);
             this._mCtx.moveTo(coors.x, coors.y);
+            this._mCtx.beginPath();
             this.isDrawing = true;
         },
         touchmove: function(coors){
@@ -62,10 +62,6 @@ define(['leafmealone/log',
         touchcancel:function(coors){this.touchend(coors);},
 
         draw:function(event){
-            log.log("Touch = " + Boolean(event.targetTouches));
-            if(event.targetTouches && event.targetTouches.length){
-                log.log("Num touch = " + event.targetTouches.length);
-            }
             if(!(event.targetTouches && event.targetTouches.length > 1)){
                 if(event.type == "touchmove"){
                     event.preventDefault();
