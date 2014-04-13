@@ -48,7 +48,7 @@ define(['dojo/_base/lang',
                 this._mCtx.moveTo(coors.x, coors.y);
             }
         },
-        touchend: function(coors){
+        touchend: function(){
             this.isDrawing = false;
         },
         touchleave: function(coors){this.touchend(coors);},
@@ -59,23 +59,41 @@ define(['dojo/_base/lang',
         touchcancel:function(coors){this.touchend(coors);},
 
         draw:function(event){
-            event.preventDefault();
-            // get the touch coordinates
-            try{
-                var target = (event.targetTouches) ?  event.targetTouches[0] : event;
-                var s = window.getComputedStyle(target.target, null);
-                var realW = parseInt(s['width'].replace('px', ''));
-                var ratio = target.target.width / realW;
-                var coors = {
-                    x: target.offsetX * ratio,// - event.target.offsetParent.offsetLeft,
-                    y: target.offsetY * ratio //- event.target.offsetParent.offsetTop
-                };
-            } catch (e) {
-                coors = {x:0, y:0}
+            if(!(event.targetTouches && event.targetTouches.length > 1)){
+                event.preventDefault();
+                // get the touch coordinates
+                try{
+                    coors = (event.targetTouches) ?  this._getTouchCoords(event) : this._getMouseCoords(event);
+                } catch (e) {
+                    coors = {x:0, y:0}
+                }
+                //console.log(coors.x, coors.y);
+                // pass the coordinates to the appropriate handler
+                this[event.type](coors);
             }
-            console.log(coors.x, coors.y);
-            // pass the coordinates to the appropriate handler
-            this[event.type](coors);
+        },
+
+        _getMouseCoords:function(event){
+            var s = window.getComputedStyle(event.target, null);
+            var realW = parseInt(s['width'].replace('px', ''));
+            var ratio = event.target.width / realW;
+            var coors = {
+                x: event.offsetX * ratio,// - event.target.offsetParent.offsetLeft,
+                y: event.offsetY * ratio //- event.target.offsetParent.offsetTop
+            };
+            return coors;
+        },
+
+        _getTouchCoords:function(event){
+            event = event.targetTouches[0];
+            var s = window.getComputedStyle(event.target, null);
+            var realW = parseInt(s['width'].replace('px', ''));
+            var ratio = event.target.width / realW;
+            var coors = {
+                x: (event.pageX - event.target.offsetParent.offsetLeft) * ratio,
+                y: (event.pageY - event.target.offsetParent.offsetTop) * ratio
+            };
+            return coors;
         },
 
         addImageToCvs: function(dataUrl){
