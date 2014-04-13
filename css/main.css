@@ -1,0 +1,19 @@
+@viewport{
+            zoom: 1.0;
+            width: extend-to-zoom;
+        }
+@-ms-viewport{
+            width: extend-to-zoom;
+            zoom: 1.0;
+        }
+
+html{
+    width: 100%;
+    max-width: 960px;
+}
+
+canvas{
+    width: 100%;
+    position: absolute;
+    border: solid black 1px;
+}
