@@ -1,6 +1,6 @@
-define(['leafmealone/log',
+define([
     'dojo/_base/lang',
-    'dojo/_base/declare'], function (log, lang, declare) {
+    'dojo/_base/declare'], function (lang, declare) {
 
     //noinspection JSUnusedGlobalSymbols
     return declare([],{
@@ -34,21 +34,21 @@ define(['leafmealone/log',
             this._mCtx.beginPath();
             this._mCtx.arc(coors.x, coors.y,this._getSize(),0,2*Math.PI,false);
             this._mCtx.fill();
-            this._mCtx.lineWidth=this._getSize() * 2;
+            //this._mCtx.lineWidth=this._getSize() * 2;
         },
         touchstart: function(coors){
             //this._doPoint(coors);
-            this._mCtx.moveTo(coors.x, coors.y);
-            this._mCtx.beginPath();
+            //this._mCtx.moveTo(coors.x, coors.y);
+            //this._mCtx.beginPath();
             this.isDrawing = true;
         },
         touchmove: function(coors){
             if (this.isDrawing) {
-                this._mCtx.lineTo(coors.x, coors.y);
-                this._mCtx.stroke();
+                //this._mCtx.lineTo(coors.x, coors.y);
+                //this._mCtx.stroke();
                 this._doPoint(coors);
-                this._mCtx.beginPath();
-                this._mCtx.moveTo(coors.x, coors.y);
+                //this._mCtx.beginPath();
+                //this._mCtx.moveTo(coors.x, coors.y);
             }
         },
         touchend: function(){
@@ -89,7 +89,7 @@ define(['leafmealone/log',
 
         _getTouchCoords:function(event){
             event = event.targetTouches[0];
-            var s = window.getComputedStyle(event.target, null);
+            var s = event.target.gcurrentStyle || window.getComputedStyle(event.target, null);
             var realW = parseInt(s['width'].replace('px', ''));
             var ratio = event.target.width / realW;
             return {
