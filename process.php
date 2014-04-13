@@ -8,5 +8,6 @@ $data = base64_decode($img);
 $file = UPLOAD_DIR . uniqid() . '.png';
 $success = file_put_contents($file, $data);
 header('Content-type: application/json');
-print $success ? '{"url":"'.$file.'"}' : '{}' ;
+$result = array('url'=>$file, 'lat'=>$_POST['lat'], 'lon'=>$_POST['lon']);
+print $success ? json_encode($result) : '{}' ;
 ?>

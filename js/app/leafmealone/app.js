@@ -1,9 +1,11 @@
 define(
-['dojo/request/xhr',
+['dojo/when',
+    'leafmealone/geo',
+    'dojo/request/xhr',
     'dojo/on',
     'leafmealone/Drawer',
     'dojo/_base/lang'],
-function(xhr, on, Drawer, lang) {
+function(when, geo, xhr, on, Drawer, lang) {
 return {
     run:function(){
         // Check for the various File API support.
@@ -23,6 +25,12 @@ return {
         document.getElementById('imageUpLoad').addEventListener('change', lang.hitch(this, this._handleFileSelect), false);
         on(document.getElementById("doMaskBtn"),"click", lang.hitch(this._d, this._d.maskImage));
         on(document.getElementById("sendBtn"),"click", lang.hitch(this, this._send));
+
+        // Store geo location if given to us.
+        when(geo.getLocation(), lang.hitch(this, function(coords){
+            this.lat = coords.lat;
+            this.lon = coords.lon;
+        }));
     },
 
     _handleFileSelect: function(evt) {
@@ -47,7 +55,9 @@ return {
         var dataURL = this._d.toUrl();
         xhr.post("process.php",{
             data: {
-                img: dataURL
+                img: dataURL,
+                lat:this.lat,
+                lon:this.lon
             },
             handleAs:"json"
         }).then(lang.hitch(this, this._imageUploaded));
@@ -55,7 +65,7 @@ return {
 
     _imageUploaded: function(result){
         if(result.url){
-            window.location = result.url;
+            window.location = "map.html#image=" + result.url + "&lat=" + result.lat + "&lon=" + result.lon;
         }
     }
 }});

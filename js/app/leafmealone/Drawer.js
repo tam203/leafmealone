@@ -36,19 +36,12 @@ define([
             this._mCtx.fill();
             //this._mCtx.lineWidth=this._getSize() * 2;
         },
-        touchstart: function(coors){
-            //this._doPoint(coors);
-            //this._mCtx.moveTo(coors.x, coors.y);
-            //this._mCtx.beginPath();
+        touchstart: function(){
             this.isDrawing = true;
         },
         touchmove: function(coors){
             if (this.isDrawing) {
-                //this._mCtx.lineTo(coors.x, coors.y);
-                //this._mCtx.stroke();
                 this._doPoint(coors);
-                //this._mCtx.beginPath();
-                //this._mCtx.moveTo(coors.x, coors.y);
             }
         },
         touchend: function(){
@@ -122,16 +115,27 @@ define([
         maskImage:function(){
             var maskData = this._mCtx.getImageData(0,0,this._mCvs.width,this._mCvs.height);
             var mask = maskData.data;
-
             var imgData = this._ctx.getImageData(0,0,this._cvs.width,this._cvs.height);
 
+            this._colourPixForMask(imgData.data, 0); // Top Left to mask colour;
             for(var i=0; i<mask.length; i+=4) {
-                imgData.data[i+3] = Math.abs(mask[i+3] - 1);
+                var maskAlpha = mask[i+3];
+                if(maskAlpha < 0.9){
+                    this._colourPixForMask(imgData.data, i);
+                }
             }
 
             this._ctx.putImageData(imgData, 0, 0);
             this._mCtx.clearRect(0,0,this._mCvs.width,this._mCvs.height)
         },
+
+        _colourPixForMask:function(data, i){
+            data[i] = 255; // R
+            data[i+1] = 0; // G
+            data[i+2] = 128; // B
+            data[i+3] = 10; // A
+        },
+
 
         toUrl:function(){
             return this._cvs.toDataURL();
