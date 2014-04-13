@@ -1,8 +1,10 @@
 define(['dojo/_base/lang',
     'dojo/_base/declare'], function (lang, declare) {
 
+    //noinspection JSUnusedGlobalSymbols
     return declare([],{
         isDrawing: false,
+
         constructor:function(canvas, maskCanvas){
             this._ctx = canvas.getContext("2d");
             this._cvs = canvas;
@@ -29,7 +31,7 @@ define(['dojo/_base/lang',
         _doPoint:function(coors){
             this._mCtx.lineWidth=1;
             this._mCtx.beginPath();
-            this._mCtx.arc(coors.x, coors.y,this._getSize(),0,2*Math.PI);
+            this._mCtx.arc(coors.x, coors.y,this._getSize(),0,2*Math.PI,false);
             this._mCtx.fill();
             this._mCtx.lineWidth=this._getSize() * 2;
         },
@@ -51,17 +53,18 @@ define(['dojo/_base/lang',
         touchend: function(){
             this.isDrawing = false;
         },
-        touchleave: function(coors){this.touchend(coors);},
+        touchleave: function(){this.touchend();},
         mousedown:function(coors){this.touchstart(coors);},
-        mouseout:function(coors){this.touchend(coors);},
+        mouseout:function(){this.touchend();},
         mousemove:function(coors){this.touchmove(coors);},
-        mouseup:function(coors){this.touchend(coors);},
+        mouseup:function(){this.touchend();},
         touchcancel:function(coors){this.touchend(coors);},
 
         draw:function(event){
             if(!(event.targetTouches && event.targetTouches.length > 1)){
                 event.preventDefault();
                 // get the touch coordinates
+                var coors;
                 try{
                     coors = (event.targetTouches) ?  this._getTouchCoords(event) : this._getMouseCoords(event);
                 } catch (e) {
@@ -77,11 +80,10 @@ define(['dojo/_base/lang',
             var s = window.getComputedStyle(event.target, null);
             var realW = parseInt(s['width'].replace('px', ''));
             var ratio = event.target.width / realW;
-            var coors = {
+            return {
                 x: event.offsetX * ratio,// - event.target.offsetParent.offsetLeft,
                 y: event.offsetY * ratio //- event.target.offsetParent.offsetTop
             };
-            return coors;
         },
 
         _getTouchCoords:function(event){
@@ -89,11 +91,10 @@ define(['dojo/_base/lang',
             var s = window.getComputedStyle(event.target, null);
             var realW = parseInt(s['width'].replace('px', ''));
             var ratio = event.target.width / realW;
-            var coors = {
+            return {
                 x: (event.pageX - event.target.offsetParent.offsetLeft) * ratio,
                 y: (event.pageY - event.target.offsetParent.offsetTop) * ratio
             };
-            return coors;
         },
 
         addImageToCvs: function(dataUrl){
@@ -122,11 +123,10 @@ define(['dojo/_base/lang',
             var mask = maskData.data;
 
             var imgData = this._ctx.getImageData(0,0,this._cvs.width,this._cvs.height);
-            var img = imgData.data;
 
             for(var i=0; i<mask.length; i+=4) {
                 imgData.data[i+3] = Math.abs(mask[i+3] - 1);
-            };
+            }
 
             this._ctx.putImageData(imgData, 0, 0);
             this._mCtx.clearRect(0,0,this._mCvs.width,this._mCvs.height)
