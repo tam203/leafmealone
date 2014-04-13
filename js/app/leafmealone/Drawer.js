@@ -67,7 +67,9 @@ define(['leafmealone/log',
                 log.log("Num touch = " + event.targetTouches.length);
             }
             if(!(event.targetTouches && event.targetTouches.length > 1)){
-                event.preventDefault();
+                if(event.type == "touchmove"){
+                    event.preventDefault();
+                }
                 var coors;
                 try{
                     coors = (event.targetTouches) ?  this._getTouchCoords(event) : this._getMouseCoords(event);
